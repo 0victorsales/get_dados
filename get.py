@@ -19,7 +19,7 @@ def find_phone_numbers(s):
 
 
 #SECTION - main code
-dados_empresa = {}
+
 lista_dados = []
 file_path  = r"Planilha sem título.xlsx" 
 df = pd.read_excel(file_path)
@@ -29,6 +29,7 @@ num_linhas = df.shape[0]
 for cont in range(num_linhas):
 
     cnpj = df.iloc[cont,0]
+    razao_social = df.iloc[cont,1]
     
     resposta = requests.get(f'http://cnpj.info/{cnpj}')
 
@@ -86,7 +87,7 @@ for cont in range(num_linhas):
         "Atividades de negócios": activities
     }
 
-    
+    dados_empresa = {}
     # print(extracted_data['Contatos'])
     dados = extracted_data['Contatos']
     string = dados['Telefone(s)']
@@ -94,7 +95,7 @@ for cont in range(num_linhas):
     dados_email = find_emails(string)
     dados_numero = find_phone_numbers(string)
 
-    #dados_empresa["Razão social"]
+    dados_empresa["Razão social"] = razao_social
     dados_empresa["cnpj"] = cnpj
     dados_empresa["emails"] = [dados_email[0]] if dados_email else []
     dados_empresa["telefones"] = [dados_numero[0]] if dados_numero else []
@@ -102,4 +103,3 @@ for cont in range(num_linhas):
 
 df = pd.DataFrame(lista_dados)
 df.to_excel('lista_dados.xlsx', index=False)
-print('d')
